@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "CBH",
+    "DTW",
+    "PXO"
+  ],
+  "key": {
+    "C": "minecraft:carrot",
+    "B": "minecraft:bread",
+    "H": "minecraft:hay_block",
+    "D": "minecraft:diamond_block",
+    "T": "minecraft:totem_of_undying",
+    "W": "minecraft:nether_star",
+    "P": "minecraft:iron_pickaxe",
+    "X": "minecraft:iron_axe",
+    "O": "minecraft:iron_hoe"
+  },
+  "result": {
+    "id": "building-totem:building_totem",
+    "count": 1
+  }
+}

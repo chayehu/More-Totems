@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "ABA",
+    "CTC",
+    "CDC"
+  ],
+  "key": {
+    "A": "minecraft:tnt",
+    "B": "minecraft:creeper_head",
+    "C": "minecraft:gunpowder",
+    "T": "minecraft:totem_of_undying",
+    "D": "minecraft:fire_charge"
+  },
+  "result": {
+    "id": "building-totem:creeper_totem",
+    "count": 1
+  }
+}

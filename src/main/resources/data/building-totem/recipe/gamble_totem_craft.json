@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " B ",
+    "BTB",
+    " B "
+  ],
+  "key": {
+    "B": "minecraft:bone",
+    "T": "minecraft:totem_of_undying"
+  },
+  "result": {
+    "id": "building-totem:gamble_totem",
+    "count": 1
+  }
+}

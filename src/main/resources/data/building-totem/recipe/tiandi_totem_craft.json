@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SNS",
+    "NCN",
+    "SNS"
+  ],
+  "key": {
+    "S": "minecraft:nether_star",
+    "N": "minecraft:netherite_block",
+    "C": "building-totem:creeper_totem"
+  },
+  "result": {
+    "id": "building-totem:tiandi_totem",
+    "count": 1
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "item.building-totem.building_totem": "Building Totem of Rising Tower",
+  "item.building-totem.building_totem.tooltip": "The first to reach the top of the Oriental Pearl Tower is the worker!",
+  "item.building-totem.creeper_totem": "Creeper Totem",
+  "item.building-totem.creeper_totem.tooltip": "Self-destruct! This is just a \"pig\"'s great revenge",
+  "item.building-totem.heal_totem": "Heal Totem",
+  "item.building-totem.heal_totem.tooltip": "Fully restores health on death, grants extra golden hearts and regeneration. A healer cannot heal themselves!",
+  "item.building-totem.teleport_totem": "Teleport Totem",
+  "item.building-totem.teleport_totem.tooltip": "Right-click a block to set a teleport point, return here on death",
+  "item.building-totem.teleport_totem.bind": "Teleport point bound!",
+  "item.building-totem.supreme_totem": "Supreme Totem",
+  "item.building-totem.supreme_totem.tooltip": "30 seconds of absolute power. Reign supreme!!",
+  "item.building-totem.lightning_totem": "Lightning Totem",
+  "item.building-totem.lightning_totem.tooltip": "Summons thunder on death, strikes nearby monsters every 2 sec for 30 sec",
+  "item.building-totem.gamble_totem": "Gamble Totem",
+  "item.building-totem.gamble_totem.tooltip": "50% chance to gain powerful buffs on death, 50% chance to die instantly (items kept)",
+  "item.building-totem.tiandi_totem": "TianDi TongShou Totem",
+  "item.building-totem.tiandi_totem.tooltip": "Creates a devastating explosion on death, grants invincibility"
+}

@@ -1,0 +1,32 @@
+{
+	"schemaVersion": 1,
+	"id": "building-totem",
+	"version": "${version}",
+	"name": "Building Totem",
+	"description": "Adds 8 unique totems, from building creation to nuclear explosions. Created by Tea_Leaf_Fox and 茶叶狐",
+	"authors": [
+		"Tea_Leaf_Fox;茶叶狐"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/building-totem/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.example.buildingtotem.BuildingTotem",
+			"com.example.buildingtotem.ChestLootTableInjector"
+		]
+	},
+	"mixins": [
+		"building-totem.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

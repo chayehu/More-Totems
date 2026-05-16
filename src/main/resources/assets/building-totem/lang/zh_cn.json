@@ -1,0 +1,19 @@
+{
+  "item.building-totem.building_totem": "平地起高楼图腾",
+  "item.building-totem.building_totem.tooltip": "第一个登上东方明珠的是工人！",
+  "item.building-totem.creeper_totem": "苦力怕图腾",
+  "item.building-totem.creeper_totem.tooltip": "自爆！这只是一只“猪”的伟大报复",
+  "item.building-totem.heal_totem": "治疗图腾",
+  "item.building-totem.heal_totem.tooltip": "死亡时完全恢复生命，并获得额外的金心与生命恢复，医者不能自医！",
+  "item.building-totem.teleport_totem": "传送图腾",
+  "item.building-totem.teleport_totem.tooltip": "右键方块绑定传送点，死亡时返回此地",
+  "item.building-totem.teleport_totem.bind": "传送点已绑定！",
+  "item.building-totem.supreme_totem": "君临天下图腾",
+  "item.building-totem.supreme_totem.tooltip": "30秒绝对力量，君临天下！！",
+  "item.building-totem.lightning_totem": "雷电图腾",
+  "item.building-totem.lightning_totem.tooltip": "死亡时召唤天雷，30秒内每2秒劈向周围怪物",
+  "item.building-totem.gamble_totem": "赌徒图腾",
+  "item.building-totem.gamble_totem.tooltip": "死亡时50%获得强力增益，50%直接死亡（保留物品）",
+  "item.building-totem.tiandi_totem": "天地同寿图腾",
+  "item.building-totem.tiandi_totem.tooltip": "死亡时产生毁天灭地的爆炸，自身无敌"
+}

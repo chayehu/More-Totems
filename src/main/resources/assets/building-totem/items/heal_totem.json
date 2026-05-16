@@ -1,0 +1,6 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "building-totem:item/heal_totem"
+  }
+}

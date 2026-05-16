@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " L ",
+    "LTL",
+    " L "
+  ],
+  "key": {
+    "L": "minecraft:lightning_rod",
+    "T": "minecraft:totem_of_undying"
+  },
+  "result": {
+    "id": "building-totem:lightning_totem",
+    "count": 1
+  }
+}

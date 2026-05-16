@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/totem_of_undying",
+  "textures": {
+    "layer0": "building-totem:item/heal_totem",
+    "layer1": "building-totem:item/heal_totem"
+  }
+}

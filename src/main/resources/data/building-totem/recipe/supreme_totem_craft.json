@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "NSN",
+    "STS",
+    "NSN"
+  ],
+  "key": {
+    "N": "minecraft:netherite_ingot",
+    "S": "minecraft:nether_star",
+    "T": "minecraft:totem_of_undying"
+  },
+  "result": {
+    "id": "building-totem:supreme_totem",
+    "count": 1
+  }
+}
