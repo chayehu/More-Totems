@@ -25,11 +25,12 @@ public class LightningTotemEffect implements TotemEffect {
 
     private static final double STRIKE_RADIUS = 15.0;
     private static final double VISUAL_STRIKE_RADIUS = 8.0;
-    private static final int EFFECT_DURATION = 600; // 发光+防火 30 秒
+    private static final int EFFECT_DURATION = 600;          // 30 秒 (tick)
+    private static final int STRIKE_INTERVAL_MS = 2000;     // 雷击间隔 2 秒
+    private static final int FOLLOW_INTERVAL_MS = 200;      // 三叉戟跟随间隔 0.2 秒 (流畅)
 
     @Override
     public void onTrigger(ServerPlayerEntity player, ItemStack totemStack, ServerWorld world) {
-        // 获取玩家位置（使用 getX/getY/getZ 避免映射问题）
         double px = player.getX();
         double py = player.getY();
         double pz = player.getZ();
@@ -38,11 +39,11 @@ public class LightningTotemEffect implements TotemEffect {
         ItemEntity tridentEntity = new ItemEntity(world,
                 px, py + 2.0, pz,
                 new ItemStack(Items.TRIDENT));
-        tridentEntity.setPickupDelay(32767);        // 禁止拾取
-        tridentEntity.setNoGravity(true);           // 悬浮
-        tridentEntity.setInvulnerable(true);        // 无敌
-        tridentEntity.setNeverDespawn();            // 不会自然消失
-        tridentEntity.setGlowing(true);             // 发光轮廓，更显眼
+        tridentEntity.setPickupDelay(32767);
+        tridentEntity.setNoGravity(true);
+        tridentEntity.setInvulnerable(true);
+        tridentEntity.setNeverDespawn();
+        tridentEntity.setGlowing(true);
         world.spawnEntity(tridentEntity);
 
         // 发光 + 防火效果（30 秒）
@@ -53,37 +54,62 @@ public class LightningTotemEffect implements TotemEffect {
         world.playSound(null, player.getBlockPos(), SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER,
                 SoundCategory.PLAYERS, 1.0F, 1.0F);
 
-        // 启动定时器，每 2 秒执行一次雷击，直到发光效果消失
+        // 记录开始时间（毫秒），用于驱动两个独立的动作
+        final long startTime = System.currentTimeMillis();
+
+        // 单一定时器，每 50ms 检查一次，负责调度雷击和跟随
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
+            private long lastStrike = 0;
+            private long lastFollow = 0;
+
             @Override
             public void run() {
-                // 所有对世界的操作必须在服务端线程执行
                 world.getServer().execute(() -> {
-                    // 检查玩家是否存活，发光效果是否还在
-                    if (player.isAlive() && player.hasStatusEffect(StatusEffects.GLOWING)) {
-                        performStrike(player, world);
+                    // 玩家不在或效果结束
+                    if (!player.isAlive() || !player.hasStatusEffect(StatusEffects.GLOWING)) {
+                        timer.cancel();
+                        if (tridentEntity.isAlive()) {
+                            tridentEntity.remove(Entity.RemovalReason.DISCARDED);
+                        }
+                        return;
+                    }
 
-                        // 让三叉戟始终跟随玩家头顶
+                    long now = System.currentTimeMillis();
+                    long elapsed = now - startTime;
+
+                    // 超过 30 秒自动结束
+                    if (elapsed >= EFFECT_DURATION * 50L) {
+                        timer.cancel();
+                        if (tridentEntity.isAlive()) {
+                            tridentEntity.remove(Entity.RemovalReason.DISCARDED);
+                        }
+                        return;
+                    }
+
+                    // 雷击：距离上次超过 2 秒
+                    if (now - lastStrike >= STRIKE_INTERVAL_MS) {
+                        lastStrike = now;
+                        performStrike(player, world);
+                    }
+
+                    // 三叉戟跟随：距离上次超过 0.2 秒
+                    if (now - lastFollow >= FOLLOW_INTERVAL_MS) {
+                        lastFollow = now;
+                        // 平滑跟随玩家头顶
                         double newX = player.getX();
                         double newY = player.getY();
                         double newZ = player.getZ();
                         tridentEntity.setPosition(newX, newY + 2.0, newZ);
 
-                        // 三叉戟周围电粒子
+                        // 三叉戟周围极少量电粒子（每 0.2 秒 1 颗，优化性能）
                         world.spawnParticles(ParticleTypes.ELECTRIC_SPARK,
                                 tridentEntity.getX(), tridentEntity.getY() + 0.5, tridentEntity.getZ(),
-                                5, 0.3, 0.3, 0.3, 0.05);
-                    } else {
-                        // 效果结束或玩家死亡，移除三叉戟并停止定时器
-                        if (tridentEntity.isAlive()) {
-                            tridentEntity.remove(Entity.RemovalReason.DISCARDED);
-                        }
-                        timer.cancel();
+                                1, 0.2, 0.2, 0.2, 0.02);
                     }
                 });
             }
-        }, 0, 2000); // 立即开始，之后每 2000 毫秒（2 秒）一次
+        }, 0, 50); // 每 50ms 检查一次
     }
 
     private void performStrike(ServerPlayerEntity player, ServerWorld world) {
@@ -112,7 +138,7 @@ public class LightningTotemEffect implements TotemEffect {
 
             LightningEntity visualLightning = new LightningEntity(EntityType.LIGHTNING_BOLT, world);
             visualLightning.refreshPositionAndAngles(x, py, z, world.random.nextFloat() * 360.0F, 0.0F);
-            visualLightning.setCosmetic(true); // 装饰性，不造成伤害，不起火
+            visualLightning.setCosmetic(true);
             world.spawnEntity(visualLightning);
         }
     }

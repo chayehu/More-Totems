@@ -1,3 +1,10 @@
+/*
+ * 图腾扩展工艺 (Totem Expansion Craft)
+ * Copyright (c) 2025 Tea_Leaf_Fox (茶叶狐)
+ * 许可证：CC BY-NC-ND 4.0
+ * https://creativecommons.org/licenses/by-nc-nd/4.0/
+ */
+
 package com.example.buildingtotem;
 
 import net.fabricmc.api.ModInitializer;
@@ -5,6 +12,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
@@ -44,6 +52,7 @@ public class BuildingTotem implements ModInitializer {
         EFFECT_MAP.put("lightning_totem", new LightningTotemEffect());
         EFFECT_MAP.put("gamble_totem", new GambleTotemEffect());
         EFFECT_MAP.put("tiandi_totem", new TianDiTongShouEffect());
+        EFFECT_MAP.put("void_totem", new VoidTotemEffect());
 
         // 注册图腾物品
         registerTotemItem("building_totem", "item.building-totem.building_totem", "item.building-totem.building_totem.tooltip");
@@ -53,6 +62,7 @@ public class BuildingTotem implements ModInitializer {
         registerTotemItem("lightning_totem", "item.building-totem.lightning_totem", "item.building-totem.lightning_totem.tooltip");
         registerTotemItem("gamble_totem", "item.building-totem.gamble_totem", "item.building-totem.gamble_totem.tooltip");
         registerTotemItem("tiandi_totem", "item.building-totem.tiandi_totem", "item.building-totem.tiandi_totem.tooltip");
+        registerTotemItem("void_totem", "item.building-totem.void_totem", "item.building-totem.void_totem.tooltip");
 
         // 单独注册传送图腾
         RegistryKey<Item> teleportKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of("building-totem", "teleport_totem"));
@@ -76,6 +86,25 @@ public class BuildingTotem implements ModInitializer {
             }
             return true;
         });
+
+        // 虚空图腾：监听虚空伤害
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            if (entity instanceof ServerPlayerEntity player && source.isOf(DamageTypes.OUT_OF_WORLD)) {
+                ItemStack offHand = player.getOffHandStack();
+                if ("void_totem".equals(ITEM_TO_ID.getOrDefault(offHand.getItem(), ""))) {
+                    offHand.decrement(1);
+                    EFFECT_MAP.get("void_totem").onTrigger(player, offHand, (ServerWorld) player.getEntityWorld());
+                    return false; // 阻止虚空伤害
+                }
+                ItemStack mainHand = player.getMainHandStack();
+                if ("void_totem".equals(ITEM_TO_ID.getOrDefault(mainHand.getItem(), ""))) {
+                    mainHand.decrement(1);
+                    EFFECT_MAP.get("void_totem").onTrigger(player, mainHand, (ServerWorld) player.getEntityWorld());
+                    return false; // 阻止虚空伤害
+                }
+            }
+            return true;
+        });
     }
 
     private boolean tryActivate(ServerPlayerEntity player, ItemStack stack) {
@@ -91,7 +120,7 @@ public class BuildingTotem implements ModInitializer {
         player.setHealth(1.0f);
         player.clearStatusEffects();
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.REGENERATION, 900, 1));
-        player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 600, 1)); // 改为30秒
+        player.addStatusEffect(new StatusEffectInstance(StatusEffects.ABSORPTION, 600, 1));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 900, 0));
         player.addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 900, 0));
         world.playSound(player, player.getBlockPos(), TOTEM_USE_SOUND, SoundCategory.PLAYERS, 1.0f, 1.0f);

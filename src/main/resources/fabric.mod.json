@@ -2,16 +2,17 @@
 	"schemaVersion": 1,
 	"id": "building-totem",
 	"version": "${version}",
-	"name": "Building Totem",
-	"description": "Adds 8 unique totems, from building creation to nuclear explosions. Created by Tea_Leaf_Fox and 茶叶狐",
+	"name": "图腾工艺",
+	"description": "Adds 9 unique totems, from building creation to nuclear explosions. Created by Tea_Leaf_Fox and 茶叶狐",
 	"authors": [
-		"Tea_Leaf_Fox;茶叶狐"
+		"Tea_Leaf_Fox",
+		"茶叶狐"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/chayehu/More-Totems",
+		"sources": "https://github.com/chayehu/More-Totems"
 	},
-	"license": "CC0-1.0",
+	"license": "CC-BY-NC-ND-4.0",
 	"icon": "assets/building-totem/icon.png",
 	"environment": "*",
 	"entrypoints": {

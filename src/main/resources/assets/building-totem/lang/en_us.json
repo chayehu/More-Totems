@@ -15,5 +15,7 @@
   "item.building-totem.gamble_totem": "Gamble Totem",
   "item.building-totem.gamble_totem.tooltip": "50% chance to gain powerful buffs on death, 50% chance to die instantly (items kept)",
   "item.building-totem.tiandi_totem": "TianDi TongShou Totem",
-  "item.building-totem.tiandi_totem.tooltip": "Creates a devastating explosion on death, grants invincibility"
+  "item.building-totem.tiandi_totem.tooltip": "Creates a devastating explosion on death, grants invincibility",
+  "item.building-totem.void_totem": "Void Totem",
+  "item.building-totem.void_totem.tooltip": "Begs the mercy of the void when falling, teleports you back to safety"
 }
