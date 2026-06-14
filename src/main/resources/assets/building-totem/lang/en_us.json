@@ -13,7 +13,7 @@
   "item.building-totem.lightning_totem": "Lightning Totem",
   "item.building-totem.lightning_totem.tooltip": "Summons thunder on death, strikes nearby monsters every 2 sec for 30 sec",
   "item.building-totem.gamble_totem": "Gamble Totem",
-  "item.building-totem.gamble_totem.tooltip": "Upon death: 50% chance to gain a powerful buff, 50% chance to summon a hostile creature (there's an easter egg, hehe).",
+  "item.building-totem.gamble_totem.tooltip": "Upon death: 50% chance to gain a powerful buff, 50% chance to summon a hostile creature (there's an easter egg, hehe).\n\n",
   "item.building-totem.tiandi_totem": "TianDi TongShou Totem",
   "item.building-totem.tiandi_totem.tooltip": "Creates a devastating explosion on death, grants invincibility",
   "item.building-totem.void_totem": "Void Totem",
