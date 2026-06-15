@@ -76,6 +76,17 @@ public class BuildingTotem implements ModInitializer {
         ITEM_TO_ID.put(teleportItem, "teleport_totem");
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(teleportItem));
 
+        // ========== 天启剑注册 ==========
+        RegistryKey<Item> apocalypseKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of("building-totem", "apocalypse_sword"));
+        Item apocalypseSword = Items.register(apocalypseKey, ApocalypseSwordItem::new, new Item.Settings()
+                .rarity(Rarity.EPIC)
+                .maxCount(1)
+                .component(DataComponentTypes.LORE, new LoreComponent(List.of(
+                        Text.translatable("item.building-totem.apocalypse_sword.tooltip")
+                                .setStyle(Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(false))
+                ))));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(apocalypseSword));
+
         // 死亡事件
         ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
             if (entity instanceof ServerPlayerEntity player) {
@@ -94,13 +105,26 @@ public class BuildingTotem implements ModInitializer {
                 if ("void_totem".equals(ITEM_TO_ID.getOrDefault(offHand.getItem(), ""))) {
                     offHand.decrement(1);
                     EFFECT_MAP.get("void_totem").onTrigger(player, offHand, (ServerWorld) player.getEntityWorld());
-                    return false; // 阻止虚空伤害
+                    return false;
                 }
                 ItemStack mainHand = player.getMainHandStack();
                 if ("void_totem".equals(ITEM_TO_ID.getOrDefault(mainHand.getItem(), ""))) {
                     mainHand.decrement(1);
                     EFFECT_MAP.get("void_totem").onTrigger(player, mainHand, (ServerWorld) player.getEntityWorld());
-                    return false; // 阻止虚空伤害
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        // ========== 天启剑：直接秒杀（最简稳定版） ==========
+        ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
+            if (source.getAttacker() instanceof ServerPlayerEntity player) {
+                ItemStack weapon = player.getMainHandStack();
+                if (weapon.getItem() == Registries.ITEM.get(Identifier.of("building-totem", "apocalypse_sword"))) {
+                    if (entity == player) return true;
+                    entity.setHealth(0);
+                    return false;
                 }
             }
             return true;

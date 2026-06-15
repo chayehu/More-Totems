@@ -17,5 +17,7 @@
   "item.building-totem.tiandi_totem": "天地同寿图腾",
   "item.building-totem.tiandi_totem.tooltip": "死亡时产生毁天灭地的爆炸，自身无敌",
   "item.building-totem.void_totem": "虚空图腾",
-  "item.building-totem.void_totem.tooltip": "坠入虚空时祈求虚空的仁慈，自动传送回安全位置"
+  "item.building-totem.void_totem.tooltip": "坠入虚空时祈求虚空的仁慈，自动传送回安全位置",
+  "item.building-totem.apocalypse_sword": "天启剑",
+  "item.building-totem.apocalypse_sword.tooltip": "审判日降临，一击必杀"
 }

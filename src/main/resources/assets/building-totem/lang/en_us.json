@@ -17,5 +17,7 @@
   "item.building-totem.tiandi_totem": "TianDi TongShou Totem",
   "item.building-totem.tiandi_totem.tooltip": "Creates a devastating explosion on death, grants invincibility",
   "item.building-totem.void_totem": "Void Totem",
-  "item.building-totem.void_totem.tooltip": "Begs the mercy of the void when falling, teleports you back to safety"
+  "item.building-totem.void_totem.tooltip": "Begs the mercy of the void when falling, teleports you back to safety",
+  "item.building-totem.apocalypse_sword": "Apocalypse Sword",
+  "item.building-totem.apocalypse_sword.tooltip": "Judgment Day has arrived, one hit kill"
 }
