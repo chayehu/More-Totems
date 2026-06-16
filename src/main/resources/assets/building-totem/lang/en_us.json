@@ -19,5 +19,13 @@
   "item.building-totem.void_totem": "Void Totem",
   "item.building-totem.void_totem.tooltip": "Begs the mercy of the void when falling, teleports you back to safety",
   "item.building-totem.apocalypse_sword": "Apocalypse Sword",
-  "item.building-totem.apocalypse_sword.tooltip": "Judgment Day has arrived, one hit kill"
+  "item.building-totem.apocalypse_sword.tooltip": "Judgment Day has arrived, one hit kill",
+  "itemGroup.building-totem.totem_craft_group": "Totem Expansion Craft",
+
+  "advancement.building-totem.root.title": "Totem Expansion Craft",
+  "advancement.building-totem.root.description": "Obtain any totem",
+  "advancement.building-totem.apocalypse_sword.title": "Judgment Day",
+  "advancement.building-totem.apocalypse_sword.description": "Obtain the Apocalypse Sword",
+  "advancement.building-totem.first_totem_use.title": "Totem Power",
+  "advancement.building-totem.first_totem_use.description": "Use a totem for the first time"
 }

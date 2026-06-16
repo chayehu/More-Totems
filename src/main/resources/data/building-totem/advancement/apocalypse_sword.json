@@ -1,0 +1,37 @@
+{
+  "parent": "building-totem:root",
+  "display": {
+    "icon": {
+      "id": "building-totem:apocalypse_sword"
+    },
+    "title": {
+      "translate": "advancement.building-totem.apocalypse_sword.title"
+    },
+    "description": {
+      "translate": "advancement.building-totem.apocalypse_sword.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "got_sword": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "building-totem:apocalypse_sword"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "got_sword"
+    ]
+  ]
+}

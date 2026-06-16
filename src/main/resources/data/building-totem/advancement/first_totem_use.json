@@ -1,0 +1,43 @@
+{
+  "parent": "building-totem:root",
+  "display": {
+    "icon": {
+      "id": "minecraft:totem_of_undying"
+    },
+    "title": {
+      "translate": "advancement.building-totem.first_totem_use.title"
+    },
+    "description": {
+      "translate": "advancement.building-totem.first_totem_use.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "used_totem": {
+      "trigger": "minecraft:item_durability_changed",
+      "conditions": {
+        "item": {
+          "items": [
+            "building-totem:building_totem",
+            "building-totem:creeper_totem",
+            "building-totem:heal_totem",
+            "building-totem:teleport_totem",
+            "building-totem:supreme_totem",
+            "building-totem:lightning_totem",
+            "building-totem:gamble_totem",
+            "building-totem:tiandi_totem",
+            "building-totem:void_totem"
+          ]
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "used_totem"
+    ]
+  ]
+}

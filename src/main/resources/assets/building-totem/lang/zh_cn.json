@@ -19,5 +19,13 @@
   "item.building-totem.void_totem": "虚空图腾",
   "item.building-totem.void_totem.tooltip": "坠入虚空时祈求虚空的仁慈，自动传送回安全位置",
   "item.building-totem.apocalypse_sword": "天启剑",
-  "item.building-totem.apocalypse_sword.tooltip": "审判日降临，一击必杀"
+  "item.building-totem.apocalypse_sword.tooltip": "审判日降临，一击必杀",
+  "itemGroup.building-totem.totem_craft_group": "图腾扩展工艺",
+
+  "advancement.building-totem.root.title": "图腾扩展工艺",
+  "advancement.building-totem.root.description": "获得任意一个图腾",
+  "advancement.building-totem.apocalypse_sword.title": "审判日降临",
+  "advancement.building-totem.apocalypse_sword.description": "获得天启剑",
+  "advancement.building-totem.first_totem_use.title": "图腾之力",
+  "advancement.building-totem.first_totem_use.description": "第一次使用图腾"
 }

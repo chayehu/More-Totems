@@ -14,13 +14,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
@@ -44,8 +42,13 @@ public class BuildingTotem implements ModInitializer {
     private static final Map<Item, String> ITEM_TO_ID = new HashMap<>();
     private static final SoundEvent TOTEM_USE_SOUND = Registries.SOUND_EVENT.get(Identifier.ofVanilla("item.totem.use"));
 
+    // 天启剑死亡不掉落的备份 Map
     private static final Map<UUID, ItemStack> DEATH_KEPT_SWORDS = new HashMap<>();
+    // 天启剑的物品 ID
     private static final Identifier APOCALYPSE_SWORD_ID = Identifier.of("building-totem", "apocalypse_sword");
+
+    // 公开平地起高楼图腾，供 ModItemGroups 使用
+    public static Item BUILDING_TOTEM;
 
     @Override
     public void onInitialize() {
@@ -80,7 +83,6 @@ public class BuildingTotem implements ModInitializer {
                                 .setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(false))
                 ))));
         ITEM_TO_ID.put(teleportItem, "teleport_totem");
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(teleportItem));
 
         // ========== 天启剑注册 ==========
         RegistryKey<Item> apocalypseKey = RegistryKey.of(RegistryKeys.ITEM, APOCALYPSE_SWORD_ID);
@@ -92,7 +94,20 @@ public class BuildingTotem implements ModInitializer {
                         Text.translatable("item.building-totem.apocalypse_sword.tooltip")
                                 .setStyle(Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(false))
                 ))));
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(apocalypseSword));
+
+        // ========== 注册创造物品栏 ==========
+        ModItemGroups.register();
+
+        // 将所有图腾和天启剑添加到自定义创造物品栏
+        ItemGroupEvents.modifyEntriesEvent(ModItemGroups.TOTEM_CRAFT_GROUP_KEY).register(content -> {
+            for (Item item : ITEM_TO_ID.keySet()) {
+                content.add(item);
+            }
+            content.add(apocalypseSword);
+        });
+
+        // 公开平地起高楼图腾，供 ModItemGroups 等外部使用
+        BUILDING_TOTEM = Registries.ITEM.get(Identifier.of("building-totem", "building_totem"));
 
         // 死亡事件（原有图腾逻辑）
         ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
@@ -124,7 +139,7 @@ public class BuildingTotem implements ModInitializer {
             return true;
         });
 
-        // ========== 天启剑：攻击秒杀 + 审判无敌 ==========
+        // ========== 天启剑：攻击秒杀（左键单体） + 审判无敌 ==========
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
             if (source.getAttacker() instanceof ServerPlayerEntity attacker) {
                 ItemStack weapon = attacker.getMainHandStack();
@@ -253,6 +268,5 @@ public class BuildingTotem implements ModInitializer {
                         Text.translatable(tooltipKey).setStyle(Style.EMPTY.withColor(Formatting.GRAY).withItalic(false))
                 ))));
         ITEM_TO_ID.put(item, id);
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(item));
     }
 }
