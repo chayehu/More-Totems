@@ -9,9 +9,13 @@ package com.example.buildingtotem;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -38,8 +42,10 @@ public class BuildingTotem implements ModInitializer {
 
     private static final Map<String, TotemEffect> EFFECT_MAP = new HashMap<>();
     private static final Map<Item, String> ITEM_TO_ID = new HashMap<>();
-
     private static final SoundEvent TOTEM_USE_SOUND = Registries.SOUND_EVENT.get(Identifier.ofVanilla("item.totem.use"));
+
+    private static final Map<UUID, ItemStack> DEATH_KEPT_SWORDS = new HashMap<>();
+    private static final Identifier APOCALYPSE_SWORD_ID = Identifier.of("building-totem", "apocalypse_sword");
 
     @Override
     public void onInitialize() {
@@ -77,17 +83,18 @@ public class BuildingTotem implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(teleportItem));
 
         // ========== 天启剑注册 ==========
-        RegistryKey<Item> apocalypseKey = RegistryKey.of(RegistryKeys.ITEM, Identifier.of("building-totem", "apocalypse_sword"));
+        RegistryKey<Item> apocalypseKey = RegistryKey.of(RegistryKeys.ITEM, APOCALYPSE_SWORD_ID);
         Item apocalypseSword = Items.register(apocalypseKey, ApocalypseSwordItem::new, new Item.Settings()
                 .rarity(Rarity.EPIC)
                 .maxCount(1)
+                .fireproof()
                 .component(DataComponentTypes.LORE, new LoreComponent(List.of(
                         Text.translatable("item.building-totem.apocalypse_sword.tooltip")
                                 .setStyle(Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(false))
                 ))));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> content.add(apocalypseSword));
 
-        // 死亡事件
+        // 死亡事件（原有图腾逻辑）
         ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
             if (entity instanceof ServerPlayerEntity player) {
                 ItemStack offHand = player.getOffHandStack();
@@ -117,18 +124,102 @@ public class BuildingTotem implements ModInitializer {
             return true;
         });
 
-        // ========== 天启剑：直接秒杀（最简稳定版） ==========
+        // ========== 天启剑：攻击秒杀 + 审判无敌 ==========
         ServerLivingEntityEvents.ALLOW_DAMAGE.register((entity, source, amount) -> {
-            if (source.getAttacker() instanceof ServerPlayerEntity player) {
-                ItemStack weapon = player.getMainHandStack();
-                if (weapon.getItem() == Registries.ITEM.get(Identifier.of("building-totem", "apocalypse_sword"))) {
-                    if (entity == player) return true;
-                    entity.setHealth(0);
+            if (source.getAttacker() instanceof ServerPlayerEntity attacker) {
+                ItemStack weapon = attacker.getMainHandStack();
+                if (weapon.getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                    if (entity == attacker) return true;
+
+                    entity.kill((ServerWorld) attacker.getEntityWorld());
                     return false;
+                }
+            }
+
+            if (entity instanceof ServerPlayerEntity player) {
+                if (isHoldingApocalypseSword(player) && ApocalypseSwordItem.isJudgmentActive(player)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        // ========== 天启剑死亡不掉落 ==========
+        ServerLivingEntityEvents.ALLOW_DEATH.register((entity, source, amount) -> {
+            if (entity instanceof ServerPlayerEntity player) {
+                ItemStack sword = null;
+                if (player.getMainHandStack().getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                    sword = player.getMainHandStack().copy();
+                    player.getMainHandStack().setCount(0);
+                } else if (player.getOffHandStack().getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                    sword = player.getOffHandStack().copy();
+                    player.getOffHandStack().setCount(0);
+                } else {
+                    int size = player.getInventory().size();
+                    for (int i = 0; i < size; i++) {
+                        ItemStack stack = player.getInventory().getStack(i);
+                        if (stack.getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                            sword = stack.copy();
+                            player.getInventory().setStack(i, ItemStack.EMPTY);
+                            break;
+                        }
+                    }
+                }
+                if (sword != null) {
+                    DEATH_KEPT_SWORDS.put(player.getUuid(), sword);
                 }
             }
             return true;
         });
+
+        // 重生时归还天启剑
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            ItemStack sword = DEATH_KEPT_SWORDS.remove(newPlayer.getUuid());
+            if (sword != null) {
+                if (!newPlayer.getInventory().insertStack(sword)) {
+                    newPlayer.dropItem(sword, false);
+                }
+                newPlayer.sendMessage(Text.literal("§6天启剑重新回到你的身边。"), true);
+            }
+        });
+
+        // ========== 保护掉落的剑：无敌 ==========
+        ServerEntityEvents.ENTITY_LOAD.register((entity, world) -> {
+            if (entity instanceof ItemEntity itemEntity) {
+                ItemStack stack = itemEntity.getStack();
+                if (stack.getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                    itemEntity.setInvulnerable(true);
+                    itemEntity.setNeverDespawn();
+                }
+            }
+        });
+
+        // ========== 虚空复制归还 ==========
+        ServerEntityEvents.ENTITY_UNLOAD.register((entity, world) -> {
+            if (!(entity instanceof ItemEntity itemEntity)) return;
+            ItemStack stack = itemEntity.getStack();
+            if (stack.getItem() != Registries.ITEM.get(APOCALYPSE_SWORD_ID)) return;
+
+            if (itemEntity.getY() < -64) {
+                UUID ownerUuid = ApocalypseSwordItem.getOwner(stack);
+                if (ownerUuid == null) return;
+
+                ServerPlayerEntity owner = world.getServer().getPlayerManager().getPlayer(ownerUuid);
+                if (owner != null) {
+                    ItemStack copy = stack.copy();
+                    if (!owner.getInventory().insertStack(copy)) {
+                        owner.dropItem(copy, false);
+                    }
+                    owner.sendMessage(Text.literal("§6天启剑从虚空中回到你的身边。"), true);
+                }
+            }
+        });
+    }
+
+    private boolean isHoldingApocalypseSword(ServerPlayerEntity player) {
+        return player.getMainHandStack().getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)
+                || player.getOffHandStack().getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID);
     }
 
     private boolean tryActivate(ServerPlayerEntity player, ItemStack stack) {
