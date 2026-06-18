@@ -31,5 +31,10 @@
   "advancement.building-totem.building_used.title": "高楼大厦",
   "advancement.building-totem.building_used.description": "使用平地起高楼图腾",
   "advancement.building-totem.creeper_used.title": "苦力怕的拥抱",
-  "advancement.building-totem.creeper_used.description": "使用苦力怕图腾"
+  "advancement.building-totem.creeper_used.description": "使用苦力怕图腾",
+  "advancement.building-totem.heal_used.title": "医者自医",
+  "advancement.building-totem.heal_used.description": "使用治疗图腾",
+  "advancement.building-totem.apocalypse_sword_bound.title": "绝对忠诚!",
+  "advancement.building-totem.apocalypse_sword_bound.description": "让天启剑认你为主",
+  "item.building-totem.apocalypse_sword.tooltip2": "同样来自虚空的力量，天启剑遇到水晶爆炸会触发自身的湮灭!"
 }

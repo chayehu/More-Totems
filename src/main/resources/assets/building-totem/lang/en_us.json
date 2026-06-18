@@ -31,5 +31,10 @@
   "advancement.building-totem.building_used.title": "Skyscraper",
   "advancement.building-totem.building_used.description": "Use the Building Totem",
   "advancement.building-totem.creeper_used.title": "Creeper's Embrace",
-  "advancement.building-totem.creeper_used.description": "Use the Creeper Totem"
+  "advancement.building-totem.creeper_used.description": "Use the Creeper Totem",
+  "advancement.building-totem.heal_used.title": "Heal Thyself",
+  "advancement.building-totem.heal_used.description": "Use the Heal Totem",
+  "advancement.building-totem.apocalypse_sword_bound.title": "Absolute Loyalty!",
+  "advancement.building-totem.apocalypse_sword_bound.description": "Bind the Apocalypse Sword to you",
+  "item.building-totem.apocalypse_sword.tooltip2": "Born of the void, the Apocalypse Sword annihilates itself upon encountering a crystal explosion!"
 }

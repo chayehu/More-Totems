@@ -92,6 +92,8 @@ public class BuildingTotem implements ModInitializer {
                 .fireproof()
                 .component(DataComponentTypes.LORE, new LoreComponent(List.of(
                         Text.translatable("item.building-totem.apocalypse_sword.tooltip")
+                                .setStyle(Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(false)),
+                        Text.translatable("item.building-totem.apocalypse_sword.tooltip2")
                                 .setStyle(Style.EMPTY.withColor(Formatting.DARK_PURPLE).withItalic(false))
                 ))));
 

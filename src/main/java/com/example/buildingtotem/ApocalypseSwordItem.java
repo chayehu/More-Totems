@@ -1,19 +1,24 @@
 package com.example.buildingtotem;
 
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
@@ -68,6 +73,14 @@ public class ApocalypseSwordItem extends Item {
             player.sendMessage(Text.literal("§6天启剑已认你为主！"), true);
             serverWorld.playSound(null, player.getBlockPos(), SoundEvents.ITEM_TOTEM_USE,
                     SoundCategory.PLAYERS, 1.0F, 1.0F);
+
+            // ========== 授予成就：绝对忠诚! ==========
+            AdvancementEntry advancement = serverWorld.getServer().getAdvancementLoader()
+                    .get(Identifier.of("building-totem", "apocalypse_sword_bound"));
+            if (advancement != null) {
+                ((ServerPlayerEntity) player).getAdvancementTracker().grantCriterion(advancement, "trigger");
+            }
+
             return ActionResult.SUCCESS;
         }
 
@@ -76,7 +89,10 @@ public class ApocalypseSwordItem extends Item {
             UUID uuid = player.getUuid();
             boolean active = JUDGMENT_MODE.contains(uuid);
             if (active) {
+                // 关闭审判
                 JUDGMENT_MODE.remove(uuid);
+                // 移除无敌效果
+                player.removeStatusEffect(StatusEffects.RESISTANCE);
                 if (!player.isCreative() && !player.isSpectator()) {
                     player.getAbilities().allowFlying = false;
                     player.getAbilities().flying = false;
@@ -85,7 +101,17 @@ public class ApocalypseSwordItem extends Item {
                 serverWorld.playSound(null, player.getBlockPos(),
                         SoundEvents.BLOCK_BEACON_DEACTIVATE, SoundCategory.PLAYERS, 1.0F, 1.0F);
             } else {
+                // 开启审判
                 JUDGMENT_MODE.add(uuid);
+                // 给予 999 级抗性提升（等级 998），无限时间，不显示粒子
+                player.addStatusEffect(new StatusEffectInstance(
+                        StatusEffects.RESISTANCE,
+                        StatusEffectInstance.INFINITE,
+                        998,    // 999 级抗性提升
+                        false,  // 不显示粒子
+                        false,  // 不显示图标
+                        false   // 不播放音效
+                ));
                 if (!player.isCreative() && !player.isSpectator()) {
                     player.getAbilities().allowFlying = true;
                     player.getAbilities().flying = true;

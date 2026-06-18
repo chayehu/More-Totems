@@ -1,5 +1,6 @@
 package com.example.buildingtotem;
 
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
@@ -8,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 
 public class HealTotemEffect implements TotemEffect {
 
@@ -39,6 +41,13 @@ public class HealTotemEffect implements TotemEffect {
 
         // 7. 头顶爱心粒子
         scheduleHearts(player, world, HEART_DURATION);
+
+        // ========== 授予成就：医者自医 ==========
+        AdvancementEntry advancement = world.getServer().getAdvancementLoader()
+                .get(Identifier.of("building-totem", "heal_used"));
+        if (advancement != null) {
+            player.getAdvancementTracker().grantCriterion(advancement, "trigger");
+        }
     }
 
     /**

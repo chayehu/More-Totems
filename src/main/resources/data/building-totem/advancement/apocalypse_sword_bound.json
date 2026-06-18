@@ -1,0 +1,28 @@
+{
+  "parent": "building-totem:root",
+  "display": {
+    "icon": {
+      "id": "building-totem:apocalypse_sword"
+    },
+    "title": {
+      "translate": "advancement.building-totem.apocalypse_sword_bound.title"
+    },
+    "description": {
+      "translate": "advancement.building-totem.apocalypse_sword_bound.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "trigger"
+    ]
+  ]
+}
