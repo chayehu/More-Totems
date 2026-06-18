@@ -11,6 +11,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.LoreComponent;
@@ -42,12 +43,9 @@ public class BuildingTotem implements ModInitializer {
     private static final Map<Item, String> ITEM_TO_ID = new HashMap<>();
     private static final SoundEvent TOTEM_USE_SOUND = Registries.SOUND_EVENT.get(Identifier.ofVanilla("item.totem.use"));
 
-    // 天启剑死亡不掉落的备份 Map
     private static final Map<UUID, ItemStack> DEATH_KEPT_SWORDS = new HashMap<>();
-    // 天启剑的物品 ID
     private static final Identifier APOCALYPSE_SWORD_ID = Identifier.of("building-totem", "apocalypse_sword");
 
-    // 公开平地起高楼图腾，供 ModItemGroups 使用
     public static Item BUILDING_TOTEM;
 
     @Override
@@ -100,7 +98,6 @@ public class BuildingTotem implements ModInitializer {
         // ========== 注册创造物品栏 ==========
         ModItemGroups.register();
 
-        // 将所有图腾和天启剑添加到自定义创造物品栏
         ItemGroupEvents.modifyEntriesEvent(ModItemGroups.TOTEM_CRAFT_GROUP_KEY).register(content -> {
             for (Item item : ITEM_TO_ID.keySet()) {
                 content.add(item);
@@ -108,7 +105,6 @@ public class BuildingTotem implements ModInitializer {
             content.add(apocalypseSword);
         });
 
-        // 公开平地起高楼图腾，供 ModItemGroups 等外部使用
         BUILDING_TOTEM = Registries.ITEM.get(Identifier.of("building-totem", "building_totem"));
 
         // 死亡事件（原有图腾逻辑）
@@ -232,6 +228,70 @@ public class BuildingTotem implements ModInitializer {
                 }
             }
         });
+
+        // ========== 定期处决非法持有者（每 2 秒） ==========
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (server.getTicks() % 40 != 0) return;
+
+            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                // 检查主手
+                ItemStack mainHand = player.getMainHandStack();
+                if (mainHand.getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                    UUID owner = ApocalypseSwordItem.getOwner(mainHand);
+                    if (owner != null && !player.getUuid().equals(owner)) {
+                        executeTraitor(player, mainHand, owner);
+                        continue;
+                    }
+                }
+                // 检查副手
+                ItemStack offHand = player.getOffHandStack();
+                if (offHand.getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                    UUID owner = ApocalypseSwordItem.getOwner(offHand);
+                    if (owner != null && !player.getUuid().equals(owner)) {
+                        executeTraitor(player, offHand, owner);
+                        continue;
+                    }
+                }
+                // 检查背包
+                int size = player.getInventory().size();
+                for (int i = 0; i < size; i++) {
+                    ItemStack invStack = player.getInventory().getStack(i);
+                    if (invStack.getItem() == Registries.ITEM.get(APOCALYPSE_SWORD_ID)) {
+                        UUID owner = ApocalypseSwordItem.getOwner(invStack);
+                        if (owner != null && !player.getUuid().equals(owner)) {
+                            executeTraitor(player, invStack, owner);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // 处决非法持有者并归还剑
+    private void executeTraitor(ServerPlayerEntity thief, ItemStack swordStack, UUID ownerUuid) {
+        // 修正：使用 getEntityWorld() 获取 ServerWorld
+        ServerWorld world = (ServerWorld) thief.getEntityWorld();
+        thief.sendMessage(Text.literal("§4你无权持有这把剑！"), true);
+        thief.kill(world);
+
+        // 从背包移除剑
+        swordStack.setCount(0);
+
+        // 归还给主人
+        ItemStack copy = swordStack.copy();
+        ServerPlayerEntity owner = world.getServer().getPlayerManager().getPlayer(ownerUuid);
+        if (owner != null) {
+            if (!owner.getInventory().insertStack(copy)) {
+                owner.dropItem(copy, false);
+            }
+            owner.sendMessage(Text.literal("§6天启剑已自动回到你的身边，盗剑者已被诛杀。"), true);
+        } else {
+            net.minecraft.entity.ItemEntity itemEntity = new net.minecraft.entity.ItemEntity(
+                    world, thief.getX(), thief.getY() + 1, thief.getZ(), copy);
+            itemEntity.setToDefaultPickupDelay();
+            itemEntity.setInvulnerable(true);
+            world.spawnEntity(itemEntity);
+        }
     }
 
     private boolean isHoldingApocalypseSword(ServerPlayerEntity player) {
