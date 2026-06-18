@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    { "item": "building-totem:building_totem" },
+    { "item": "building-totem:creeper_totem" },
+    { "item": "building-totem:heal_totem" },
+    { "item": "building-totem:teleport_totem" },
+    { "item": "building-totem:supreme_totem" },
+    { "item": "building-totem:lightning_totem" },
+    { "item": "building-totem:gamble_totem" },
+    { "item": "building-totem:tiandi_totem" },
+    { "item": "building-totem:void_totem" }
+  ],
+  "result": {
+    "id": "building-totem:apocalypse_sword",
+    "count": 1
+  }
+}
