@@ -43,9 +43,12 @@ public class BuildingTotem implements ModInitializer {
     private static final Map<Item, String> ITEM_TO_ID = new HashMap<>();
     private static final SoundEvent TOTEM_USE_SOUND = Registries.SOUND_EVENT.get(Identifier.ofVanilla("item.totem.use"));
 
+    // 天启剑死亡不掉落的备份 Map
     private static final Map<UUID, ItemStack> DEATH_KEPT_SWORDS = new HashMap<>();
+    // 天启剑的物品 ID
     private static final Identifier APOCALYPSE_SWORD_ID = Identifier.of("building-totem", "apocalypse_sword");
 
+    // 公开平地起高楼图腾，供 ModItemGroups 使用
     public static Item BUILDING_TOTEM;
 
     @Override
@@ -98,6 +101,7 @@ public class BuildingTotem implements ModInitializer {
         // ========== 注册创造物品栏 ==========
         ModItemGroups.register();
 
+        // 将所有图腾和天启剑添加到自定义创造物品栏
         ItemGroupEvents.modifyEntriesEvent(ModItemGroups.TOTEM_CRAFT_GROUP_KEY).register(content -> {
             for (Item item : ITEM_TO_ID.keySet()) {
                 content.add(item);
@@ -105,6 +109,7 @@ public class BuildingTotem implements ModInitializer {
             content.add(apocalypseSword);
         });
 
+        // 公开平地起高楼图腾，供 ModItemGroups 等外部使用
         BUILDING_TOTEM = Registries.ITEM.get(Identifier.of("building-totem", "building_totem"));
 
         // 死亡事件（原有图腾逻辑）
@@ -267,18 +272,18 @@ public class BuildingTotem implements ModInitializer {
         });
     }
 
-    // 处决非法持有者并归还剑
+    // 处决非法持有者并归还剑（已修复：先复制再清空）
     private void executeTraitor(ServerPlayerEntity thief, ItemStack swordStack, UUID ownerUuid) {
-        // 修正：使用 getEntityWorld() 获取 ServerWorld
         ServerWorld world = (ServerWorld) thief.getEntityWorld();
         thief.sendMessage(Text.literal("§4你无权持有这把剑！"), true);
-        thief.kill(world);
 
-        // 从背包移除剑
+        // ✅ 关键修复：先复制一份完整的剑，再从背包移除
+        ItemStack copy = swordStack.copy();
         swordStack.setCount(0);
 
+        thief.kill(world);
+
         // 归还给主人
-        ItemStack copy = swordStack.copy();
         ServerPlayerEntity owner = world.getServer().getPlayerManager().getPlayer(ownerUuid);
         if (owner != null) {
             if (!owner.getInventory().insertStack(copy)) {
