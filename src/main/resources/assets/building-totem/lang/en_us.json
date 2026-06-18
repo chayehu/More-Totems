@@ -27,5 +27,9 @@
   "advancement.building-totem.apocalypse_sword.title": "Judgment Day",
   "advancement.building-totem.apocalypse_sword.description": "Obtain the Apocalypse Sword",
   "advancement.building-totem.first_totem_use.title": "Totem Power",
-  "advancement.building-totem.first_totem_use.description": "Use a totem for the first time"
+  "advancement.building-totem.first_totem_use.description": "Use a totem for the first time",
+  "advancement.building-totem.building_used.title": "Skyscraper",
+  "advancement.building-totem.building_used.description": "Use the Building Totem",
+  "advancement.building-totem.creeper_used.title": "Creeper's Embrace",
+  "advancement.building-totem.creeper_used.description": "Use the Creeper Totem"
 }

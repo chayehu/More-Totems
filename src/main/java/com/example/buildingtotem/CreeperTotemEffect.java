@@ -1,5 +1,6 @@
 package com.example.buildingtotem;
 
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
@@ -39,5 +40,12 @@ public class CreeperTotemEffect implements TotemEffect {
             // 2 秒后关闭无敌
             world.getServer().execute(() -> player.setInvulnerable(false));
         });
+
+        // ========== 授予成就：苦力怕的拥抱 ==========
+        AdvancementEntry advancement = world.getServer().getAdvancementLoader()
+                .get(Identifier.of("building-totem", "creeper_used"));
+        if (advancement != null) {
+            player.getAdvancementTracker().grantCriterion(advancement, "trigger");
+        }
     }
 }

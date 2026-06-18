@@ -27,5 +27,9 @@
   "advancement.building-totem.apocalypse_sword.title": "审判日降临",
   "advancement.building-totem.apocalypse_sword.description": "获得天启剑",
   "advancement.building-totem.first_totem_use.title": "图腾之力",
-  "advancement.building-totem.first_totem_use.description": "第一次使用图腾"
+  "advancement.building-totem.first_totem_use.description": "第一次使用图腾",
+  "advancement.building-totem.building_used.title": "高楼大厦",
+  "advancement.building-totem.building_used.description": "使用平地起高楼图腾",
+  "advancement.building-totem.creeper_used.title": "苦力怕的拥抱",
+  "advancement.building-totem.creeper_used.description": "使用苦力怕图腾"
 }

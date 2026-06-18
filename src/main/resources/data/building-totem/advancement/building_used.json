@@ -1,0 +1,28 @@
+{
+  "parent": "building-totem:root",
+  "display": {
+    "icon": {
+      "id": "building-totem:building_totem"
+    },
+    "title": {
+      "translate": "advancement.building-totem.building_used.title"
+    },
+    "description": {
+      "translate": "advancement.building-totem.building_used.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "trigger": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "trigger"
+    ]
+  ]
+}

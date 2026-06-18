@@ -1,5 +1,6 @@
 package com.example.buildingtotem;
 
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.item.ItemStack;
@@ -50,6 +51,13 @@ public class BuildingTotemEffect implements TotemEffect {
                     world.random.nextFloat() * 360.0F, 0.0F);
             golem.setPlayerCreated(true);
             world.spawnEntity(golem);
+        }
+
+        // ========== 授予成就：高楼大厦 ==========
+        AdvancementEntry advancement = world.getServer().getAdvancementLoader()
+                .get(Identifier.of("building-totem", "building_used"));
+        if (advancement != null) {
+            player.getAdvancementTracker().grantCriterion(advancement, "trigger");
         }
     }
 
